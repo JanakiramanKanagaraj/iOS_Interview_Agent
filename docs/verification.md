@@ -27,3 +27,9 @@ The browser started a free session, displayed a real generated follow-up for a t
 ## Résumé upload
 
 PDF, DOCX and TXT extraction passed with synthetic documents. Browser file upload populated the editable text preview and left the separate background unchanged. Tests validate file types, cross-origin rejection, extraction errors, and inclusion of background/resume/JD as separate model context. The original file is processed in memory, not saved to the server.
+
+## Repeated-question regression
+
+Added tests for JD priority over resume keyword volume, bounded follow-ups and topic advancement, help and skip requests, exact/paraphrased duplicate rejection, persistent provider repeats, explicit repeats, bounded prompts with long documents/history, and Safari cumulative final-result deduplication. A real local seven-turn smoke test is run separately from browser sessions using synthetic candidate context. Model output is not assumed correct merely because a response succeeds.
+
+Final regression result: 27 automated tests pass. The final real local test produced seven distinct questions across concurrency, UI state, architecture and testing, with topic advancement after at most one follow-up. Accepted generated follow-ups took approximately 1.6–3.2 seconds in that run; a guarded fallback took approximately 3.4 seconds. These are synthetic test observations, not a guarantee of correctness or an evaluation of the candidate. Third-person model commentary is removed from spoken interview turns.

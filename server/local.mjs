@@ -1,4 +1,5 @@
-import {validateContext,interviewInstructions,reviewInstructions} from './interviewer.mjs';
+import {nextStep,openingQuestion,turnMessages,validateReply,fallbackQuestion,repeatRequest,plannedQuestion,cleanInterviewReply} from './interview-flow.mjs';
+import {validateContext,reviewInstructions} from './interviewer.mjs';
 const base='http://127.0.0.1:11434';
 const json=(v,status=200)=>new Response(JSON.stringify(v),{status,headers:{'Content-Type':'application/json','Cache-Control':'no-store'}});
 export async function handleLocal(request,env,fetcher=fetch){
@@ -14,12 +15,27 @@ export async function handleLocal(request,env,fetcher=fetch){
   const raw=await request.text();if(raw.length>400000)return json({error:'Request is too large.'},413);const body=JSON.parse(raw);const c=validateContext({...body,voice:'marin'});const reviewing=url.pathname==='/api/review';
   if(reviewing&&!c.history.some(t=>t.role==='user'&&t.text.trim()))return json({error:'There are no candidate answers to review yet.'},400);
   if(body.code!==undefined&&(typeof body.code!=='string'||body.code.length>30000))return json({error:'Code must be text of at most 30,000 characters.'},400);
-  const context=interviewInstructions({...c,history:[]})+'\nYou are ONLY the interviewer. Never claim that you built features or worked on the candidate’s projects. Do not invent a project for the candidate. Give only the next spoken reply, without stage directions or Markdown. Ask one question, never a list. Do not write an answer for the candidate. /no_think';
-  const messages=reviewing?[{role:'system',content:reviewInstructions+' /no_think'},{role:'user',content:JSON.stringify({...c,code:body.code||''})}]:[{role:'system',content:context},...c.history.map(t=>({role:t.role,content:t.text}))];
-  // A bounded greeting avoids inventing interviewer or candidate experience. All subsequent replies are generated from the actual conversation.
-  if(!reviewing&&!c.history.length)return json({reply:c.resume&&c.jd?'Hi, I’m your Interview Mentor. Which project from your résumé best demonstrates experience relevant to this job?':'Hi, I’m your Interview Mentor. Could you walk me through a recent iOS feature you owned and the main technical challenge you faced?',provider:'local'});
-  const r=await fetcher(base+'/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model,messages,stream:false,think:false,keep_alive:'15m',options:{temperature:.5,num_predict:reviewing?1800:250,num_ctx:4096,num_gpu:0}}),signal:AbortSignal.timeout(reviewing?240000:120000)});
-  if(!r.ok)return json({error:r.status===404?`The local model ${model} is not installed.`:'The local model could not complete this request. Your transcript is kept.'},502);
-  const d=await r.json();const text=d.message?.content?.trim();if(!text)return json({error:'The local model returned no answer. Try again.'},502);const questionEnd=text.indexOf('?');const teaching=/teach|explain|hint/i.test(c.history.at(-1)?.text||'');const reply=c.mode==='interview'&&!teaching&&questionEnd>=0?text.slice(0,questionEnd+1):text;return json(reviewing?{review:text,provider:'local'}:{reply,provider:'local'});
+  if(!reviewing){
+   const step=nextStep(c);step.followupFocus=plannedQuestion(c,step);const meta={topic:step.topic.id,label:step.topic.label,phase:step.phase,answerCount:step.answerCount,askedCount:step.asked.length};
+   const done=(reply,extra={})=>{const diagnostics={...meta,...extra};console.info(JSON.stringify({event:'interview_turn',...diagnostics}));return json({reply,provider:'local',interview:diagnostics});};
+   if(!c.history.length)return done(openingQuestion(c,step),{source:'opening'});
+   if(repeatRequest(c.history.at(-1)?.text||'')&&step.lastQuestion)return done(step.lastQuestion,{source:'requested-repeat'});
+   if(step.phase==='new-topic')return done(plannedQuestion(c,step),{source:'planned-topic'});
+   let rejected='';
+   for(let attempt=0;attempt<2;attempt++){
+    const messages=turnMessages(c,step,rejected);
+    const r=await fetcher(base+'/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model,messages,stream:false,think:false,keep_alive:'15m',options:{temperature:.35+attempt*.15,num_predict:step.phase==='teach'?500:200,num_ctx:4096,num_gpu:0}}),signal:AbortSignal.timeout(120000)});
+    if(!r.ok)return json({error:r.status===404?`The local model ${model} is not installed.`:'The local model could not complete this request. Your transcript is kept.'},502);
+    const d=await r.json();let text=d.message?.content?.trim()||'';if(c.mode==='interview'&&step.phase!=='teach')text=cleanInterviewReply(text);
+    const questionEnd=text.indexOf('?');if(questionEnd>=0&&step.phase!=='teach')text=text.slice(0,questionEnd+1);
+    rejected=validateReply(text,step);
+    if(!rejected)return done(text,{source:'generated',attempts:attempt+1,promptCharacters:JSON.stringify(messages).length});
+    console.info(JSON.stringify({event:'question_rejected',...meta,reason:rejected,attempt:attempt+1}));
+   }
+   return done(plannedQuestion(c,step),{source:'repeat-guard',reason:rejected});
+  }
+  const r=await fetcher(base+'/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model,messages:[{role:'system',content:reviewInstructions+' /no_think'},{role:'user',content:JSON.stringify({...c,code:body.code||''})}],stream:false,think:false,keep_alive:'15m',options:{temperature:.35,num_predict:1800,num_ctx:4096,num_gpu:0}}),signal:AbortSignal.timeout(240000)});
+  if(!r.ok)return json({error:'The local model could not complete the review. Your transcript is kept.'},502);
+  const d=await r.json();const text=d.message?.content?.trim();if(!text)return json({error:'The local model returned no review. Try again.'},502);return json({review:text,provider:'local'});
  }catch(e){return json({error:e.name==='TimeoutError'?'The local model timed out. Try a smaller model or a shorter session context.':e instanceof SyntaxError?'Invalid JSON request.':e.message?.includes('must be')||e.message?.startsWith('Invalid')||e.message?.startsWith('Choose')?e.message:'Could not reach Ollama. Start the local model service and retry.'},400);}
 }

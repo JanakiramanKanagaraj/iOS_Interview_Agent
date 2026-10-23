@@ -56,3 +56,11 @@ Run `npm test` and `npm run check`. Tests verify no paid-provider routing in fre
 - [Roadmap](docs/roadmap.md)
 
 Reminder automations and job applications are separate from this local interview app.
+
+## Interview progression and repetition prevention
+
+The server ranks competencies from the JD first, using resume evidence to ground questions. A curated opening and competency scenarios establish coverage. Local-model follow-ups respond to actual answers, with at most one follow-up before moving to the next competency. Exact and paraphrased repeats are rejected, retried once, and replaced with an unused question if necessary. Saying “next question” or “I already answered this” advances the topic; explicitly asking for a repeat repeats the question. Help requests stay on the current concept.
+
+Dialogue prompts use topic-relevant document excerpts and a bounded recent transcript rather than overflowing the local model’s 4,096-token window. The full transcript stays saved for export. Speech result indices are reconciled so Safari cannot append the same cumulative final result twice. The current competency is displayed above the conversation.
+
+Runtime logs record topic, phase, counts, generation/rejection status and prompt size, without logging document text or answers. Transcript downloads include these flow diagnostics for troubleshooting. This is interview orchestration and prompt improvement, not model-weight fine-tuning.
