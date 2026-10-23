@@ -1,0 +1,1 @@
+{"name":"alex-ios-interview-room","version":"0.1.0","private":true,"scripts":{"check":"node --check web/app.js"}}
