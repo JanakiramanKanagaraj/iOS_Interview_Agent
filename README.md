@@ -33,7 +33,7 @@ Local mode is the default even if OPENAI_API_KEY exists. For a different install
 
 Choose a duration, device voice, and interview or coaching style. Add a profile and optional JD. Click **Start free interview**. Samantha asks an opening question and listens after speaking. A short silence submits a recognized answer to the local AI automatically; **I'm done speaking** can finish a turn earlier. Correct recognition errors by typing a clarification. **Stop speaking / listen** interrupts Samantha and returns the microphone to you. Speech recognition pauses while Samantha speaks, so full-duplex voice interruption is not claimed.
 
-Use “hint” or “teach,” or the matching controls. Pause stops recognition, pending generation, speech and the timer. Finish stops the microphone, then requests an actual transcript-based review. Discuss code through the Swift/design area; code is reasoned about, not executed. The model can make mistakes, especially on advanced iOS topics; ask for reasoning and verify uncertain claims.
+Use “hint” or “teach,” or the matching controls. Pause stops recognition, pending generation, speech and the timer. **Restart interview** is available during a live, paused or finished session. After confirmation it cancels pending work, clears current answers/code, resets the timer and immediately starts again, keeping profile, JD, voice, duration and prior reviews. Finish stops the microphone, then requests an actual transcript-based review. Discuss code through the Swift/design area; code is reasoned about, not executed. The model can make mistakes, especially on advanced iOS topics; ask for reasoning and verify uncertain claims.
 
 ## Privacy and cost
 
