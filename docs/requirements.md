@@ -12,7 +12,7 @@ Prepare the candidate for a better senior iOS role through a two-week practice s
 - Teach simply and invite a retry when the candidate is unsure; do not shame them.
 - Clarify apparent transcription errors rather than treating them as factual claims.
 - Cover Swift, UIKit/SwiftUI, concurrency, debugging, testing, architecture, DSA in Swift, mobile system design, project ownership, and leadership over successive sessions.
-- Use supplied profile and JDs to choose questions and difficulty.
+- Keep additional background, candidate résumé upload, and pasted JD as separate fields. Use all three to choose questions and difficulty; distinguish candidate evidence from JD requirements.
 - Correct actual mistakes after the interview (or during coaching mode), with examples and at most three next actions.
 - Discuss code honestly; do not claim code was run.
 

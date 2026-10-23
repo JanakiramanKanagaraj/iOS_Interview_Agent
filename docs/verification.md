@@ -2,7 +2,7 @@
 
 ## Passed
 
-- Eleven automated tests covering provider isolation, no paid calls in default free mode, same-origin validation, input bounds, transcript semantics and timer behavior.
+- Fifteen automated tests covering provider isolation, no paid calls in default free mode, same-origin validation, input bounds, transcript semantics and timer behavior.
 - Syntax checks for the browser and backend.
 - Official Ollama v0.40.9 portable runtime downloaded; qwen3:1.7b model downloaded and verified by Ollama.
 - Real CPU inference succeeded after disabling GPU device and KV cache offload with the supplied launcher settings.
@@ -23,3 +23,7 @@ The free runtime does not use the configured paid API key. Earlier paid-version 
 ## Browser check
 
 The browser started a free session, displayed a real generated follow-up for a typed synthetic playback-recovery answer, and fired device-speech output. The test session was cleared before handoff. Actual candidate microphone transcription remains to be checked during the first real session.
+
+## Résumé upload
+
+PDF, DOCX and TXT extraction passed with synthetic documents. Browser file upload populated the editable text preview and left the separate background unchanged. Tests validate file types, cross-origin rejection, extraction errors, and inclusion of background/resume/JD as separate model context. The original file is processed in memory, not saved to the server.

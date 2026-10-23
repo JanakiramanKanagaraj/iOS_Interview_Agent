@@ -3,6 +3,7 @@ import {readFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 import {handleAPI} from './server/api.mjs';
+import {handleResume} from './server/resume.mjs';
 const root=path.dirname(fileURLToPath(import.meta.url));
 const configArg=process.argv.find(a=>a.startsWith('--config='));
 const configPath=configArg?path.resolve(configArg.slice(9)):path.join(root,'.env');
@@ -18,9 +19,9 @@ const server=http.createServer(async(req,res)=>{
    if(req.method==='POST'){
     const now=Date.now();const recent=(hits.get(url.pathname)||[]).filter(t=>now-t<60000);if(recent.length>=12){res.writeHead(429,{'Content-Type':'application/json'});res.end(JSON.stringify({error:'Please wait a minute before retrying.'}));return;}recent.push(now);hits.set(url.pathname,recent);
    }
-   let size=0;const chunks=[];for await(const part of req){size+=part.length;if(size>400000){res.writeHead(413);res.end();return;}chunks.push(part);}
+   let size=0;const chunks=[];for await(const part of req){size+=part.length;if(size>(url.pathname==='/api/resume'?6*1024*1024:400000)){res.writeHead(413);res.end();return;}chunks.push(part);}
    const request=new Request(url,{method:req.method,headers:req.headers,body:req.method==='GET'?undefined:Buffer.concat(chunks)});
-   const result=await handleAPI(request,await env());res.writeHead(result.status,Object.fromEntries(result.headers));res.end(Buffer.from(await result.arrayBuffer()));return;
+   const config=await env();const result=url.pathname==='/api/resume'?await handleResume(request,config):await handleAPI(request,config);res.writeHead(result.status,Object.fromEntries(result.headers));res.end(Buffer.from(await result.arrayBuffer()));return;
   }
   if(req.method!=='GET'){res.writeHead(405);res.end();return;}
   const names={'/':'index.html','/index.html':'index.html','/style.css':'style.css','/app.js':'app.js','/session-state.mjs':'session-state.mjs'};const name=names[url.pathname];if(!name){res.writeHead(404);res.end('Not found');return;}
