@@ -1,6 +1,6 @@
 # Free version status and next steps
 
-Implemented: local-model dialogue and follow-ups; profile/JD context; browser microphone input; device speech output; animated Samantha; interview/coaching styles; typed clarifications and Swift/design discussion; pause/finish/resume; transcript export; local-model personalized review; suggested durations from completed reviews; tests that enforce free local routing.
+Implemented: local-model dialogue and follow-ups; profile/JD context; browser microphone input; device speech output; animated Interview Mentor; interview/coaching styles; typed clarifications and Swift/design discussion; pause/finish/resume; transcript export; local-model personalized review; suggested durations from completed reviews; tests that enforce free local routing.
 
 Next validation: check a real local two-turn conversation, review accuracy, speech recognition and perceived response delay on the candidate's device. See verification.md for observed results.
 

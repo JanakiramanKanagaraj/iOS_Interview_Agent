@@ -6,7 +6,7 @@ Prepare the candidate for a better senior iOS role through a two-week practice s
 
 ## Interview behavior
 
-- Samantha is an animated woman interviewer and supportive mentor.
+- Interview Mentor is an animated woman interviewer and supportive mentor.
 - Listen to the candidate's full answer, understand it, and respond with relevant follow-ups.
 - Ask one question at a time. Avoid a fixed questionnaire presented as conversation. A short curated opening is allowed; subsequent follow-ups must be generated from actual answers.
 - Teach simply and invite a retry when the candidate is unsure; do not shame them.
@@ -35,3 +35,7 @@ Keep implementation and process documentation in the user-provided GitHub reposi
 ## Readiness gate
 
 Before restarting interview practice, verify a real local model reply, an answer-specific follow-up, and a review. Browser microphone recognition must be checked on the candidate's device; a fallback typing path must remain available. State any unverified behavior accurately.
+
+## Reset behavior update
+
+Reset clears background, résumé upload and extracted text, JD, code, current answers and the timer, then returns to setup. Voice, selected duration, style and past reviews remain available. The mentor uses the temporary name Interview Mentor until the user chooses the application name.

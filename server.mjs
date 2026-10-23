@@ -28,4 +28,4 @@ const server=http.createServer(async(req,res)=>{
   const data=await readFile(path.join(root,'web',name));res.writeHead(200,{'Content-Type':name.endsWith('.html')?'text/html':name.endsWith('.css')?'text/css':'text/javascript','Cache-Control':'no-store'});res.end(data);
  }catch{if(!res.headersSent)res.writeHead(500);res.end('Local server error.');}
 });
-server.listen(port,'127.0.0.1',()=>console.log(`Samantha interview room: http://${expectedHost}\nPrivate API configuration is read locally on each request. No key is logged.`));
+server.listen(port,'127.0.0.1',()=>console.log(`Interview Mentor room: http://${expectedHost}\nPrivate API configuration is read locally on each request. No key is logged.`));
