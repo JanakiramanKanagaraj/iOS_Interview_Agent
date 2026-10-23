@@ -1,39 +1,51 @@
-# Alex — Senior iOS Interview Room
+# Samantha — Conversational iOS Interviewer
 
-An animated, voice-enabled practice room for a senior iOS/tvOS interview preparation sprint.
+A live voice interview system with an animated interviewer, adaptive follow-ups, JD context, coding discussion, and personalized review. It uses OpenAI Realtime over WebRTC, not a scripted question queue or browser text-to-speech.
 
-## Run locally
+## Start locally
 
-Requires Python 3 and a browser:
+Requires Node.js 22 or newer. No dependency installation is needed.
 
-```sh
-python3 -m http.server 8765 --bind 127.0.0.1 --directory web
-```
+1. Copy `.env.example` to `.env` in this repository.
+2. Put an API key in `OPENAI_API_KEY`. Never commit the real `.env` file or paste a key into the browser/chat. API billing and model access must be available.
+3. Run `npm start` (or `node server.mjs`).
+4. Open http://127.0.0.1:8766.
+5. Choose duration, voice, interview/coaching mode; optionally edit your profile and paste a JD.
+6. Click **Connect & start interview** and allow the microphone.
 
-Open http://127.0.0.1:8765. Select **Voice & preview**, choose an installed English voice, preview it, and start the trial. Click **Speak answer** to request microphone access. Review the transcript before submitting; speech recognition can mishear technical terms. Typing is also supported.
+For a private configuration outside the repository, use `node server.mjs --config=/absolute/path/to/private.env`. The server reloads configuration values for each API request. The default `.env` path is the repository root. A locally installed bundled Node executable can replace `node` where Node is not on PATH.
 
-## Implemented
+## Conversation
 
-- Animated SVG interviewer with speaking and listening states.
-- Device text-to-speech, voice preview and adjustable speaking speed.
-- Browser speech recognition, explicit microphone activation, editable transcripts.
-- Guided questions, fixed follow-ups, hints, skip and repeat.
-- Session lengths from 15 to 90 minutes, pause/resume, and time-based completion.
-- Local session persistence and transcript download/copy.
-- Study notes after the practice; no fabricated automatic grades.
+Speak naturally; no answer-submission clicks are needed. Samantha hears audio through the Realtime session, responds to the answer, and asks one follow-up at a time. Low-eagerness semantic voice activity detection allows thinking pauses. Interrupt by speaking or pressing **Stop speaking**. Say “hint” or “teach,” or use the matching controls. Use **Pause** to stop microphone transmission, assistant output and the timer; **Resume** continues. Explicit spoken pause/end commands are also recognized from completed transcripts.
 
-## Current limits
+Use the coding area to share Swift or design notes. Code is discussed by the model and is not executed. A typed clarification can correct a misheard word. Both interview and teaching styles are supported.
 
-The question flow is guided, not a model-driven conversation. Personalized evaluation currently requires sharing the exported transcript with a mentor in chat. Dynamic JD analysis, automatic answer correction, cloud neural speech, and application tracking are not implemented. Maple is a ChatGPT voice and is not available through browser speech synthesis. Voice quality depends on installed device voices.
+**Finish & review** closes the peer connection and microphone, then asks the review model to assess the actual transcript and code. It provides strengths, corrections, examples, a retry question and practice priorities. Reviews can be wrong; question uncertain corrections. No fabricated scores or hiring decisions are produced by application logic.
 
-Microphone recognition is not supported in every browser. Audio may be processed by the browser vendor's online recognition service. App transcripts are stored in localStorage on the current browser; there is no server transcript database. The app does not store raw audio. Avoid sharing confidential employer information.
+## Voices
 
-## Preparation process
+Samantha is the persona. Marin is the default natural AI voice; Cedar, Coral, Sage and Shimmer are alternatives. Maple is not offered by this API integration. Voice selection applies before connecting.
 
-See [14-day practice plan](docs/interview-process.md), [mentor behavior](docs/mentor-prompt.md), [roadmap](docs/roadmap.md), and [deployment](docs/deployment.md).
+## Session history and longer interviews
 
-## Verification
+Session data and the latest 14 review summaries are saved in this browser's localStorage. Download your transcript/review for a durable record. Clear local data through the app when desired. The API's single Realtime connection lasts at most 60 minutes; the app stops at 55 minutes and offers an explicit reconnect with preserved context/time for longer sessions. Network failures also stop the microphone and preserve the transcript. Reconnect needs an explicit click. The preparation schedule is in [the process document](docs/interview-process.md).
 
-Browser checks completed for interview start and speech start event, typed-answer submission, follow-up display, pause, review summary, and voice selection. Actual microphone transcription and subjective voice quality need device verification. Check JavaScript syntax with `node --check web/app.js`.
+## Privacy and boundaries
 
-No application, email, or recruiter message is sent by this app. Reminder automation is configured separately in the originating chat, not by this repository.
+The long-lived API key is used only by the server. Browser negotiation receives SDP, not the key. Microphone capture starts after Connect and stops on failure, Finish, or page departure. Audio streams to OpenAI; text/profile/JD/code are sent for session context and review. No raw audio or transcript database is written by the server. Review requests set `store: false`; this does not replace the provider's API data retention policy. Browser localStorage is readable by anyone with access to the same browser profile.
+
+The server binds only to 127.0.0.1, validates Host and same-origin writes, caps input, and rate-limits API requests. It serves an explicit allowlist of frontend files; it cannot serve `.env` or source files. It is a private local application, not an authenticated public hosting service. Before any hosted release, add visitor authentication and server-side API configuration. Never deploy the long-lived key in static JavaScript or GitHub Pages.
+
+## Validation
+
+Run `npm test` and `npm run check`. Integration tests mock the provider to verify request shaping, secrets, errors and transcript semantics; mocked tests do not establish successful live voice behavior. Current live verification and account blockers are recorded in [verification](docs/verification.md).
+
+## Documentation
+
+- [Two-week interview process](docs/interview-process.md)
+- [Mentor behavior](docs/mentor-prompt.md)
+- [Deployment status](docs/deployment.md)
+- [Roadmap](docs/roadmap.md)
+
+Email/calendar reminders remain separate from this application. No application or recruiter message is sent by it.

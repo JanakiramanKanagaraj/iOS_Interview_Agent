@@ -1,9 +1,7 @@
-# Deployment
+# Deployment status
 
-The `web/` directory is a buildless static site. Serve it on HTTPS for deployment. Preserve private access for interview practice unless the owner explicitly requests public access.
+The current conversational application needs the Node backend (`server.mjs`) as well as the `web/` files. A static-only deployment does not provide the live interview APIs. The local application binds to 127.0.0.1 and keeps its key in private configuration.
 
-The existing Sites registration is tracked separately in the originating workspace. It has not been published: automatic approval review blocked the source workflow's credential-stdin operation. Do not create a replacement Site to work around that block. Resume publication through an approved source upload path.
+The original Sites project remains registered but unpublished. Its source-credential stdin operation was rejected by automatic approval review. It has not been retried through a bypass or replaced with another Site. A future Sites deployment must migrate to a supported server runtime, supply credentials as server-side secrets and preserve private access. Do not publish the old scripted static app as if it were this conversational version.
 
-For other static hosting, publish `web/` as the site root. No build command is needed. Do not put secrets in browser JavaScript. Browser voice availability and microphone recognition require verification on the deployed origin.
-
-GitHub Pages would generally expose the site publicly; do not enable it without an explicit audience decision. This repository deliberately does not include an automatic public deployment workflow.
+GitHub contains the application code and documentation, without private configuration or interview transcripts. GitHub Pages cannot run this Node backend. A hosted release still requires authenticated visitor access, secure server runtime configuration, and deployment verification.
