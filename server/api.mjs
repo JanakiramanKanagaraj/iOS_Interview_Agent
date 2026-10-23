@@ -1,6 +1,8 @@
+import {handleLocal} from './local.mjs';
 import {validateContext,sessionConfig,reviewInstructions} from './interviewer.mjs';
 const json=(v,status=200)=>new Response(JSON.stringify(v),{status,headers:{'Content-Type':'application/json','Cache-Control':'no-store'}});
 export async function handleAPI(request,env,fetcher=fetch) {
+ if(env.INTERVIEW_PROVIDER!=='openai')return handleLocal(request,env,fetcher);
  const path=new URL(request.url).pathname;
  if(path==='/api/health'&&request.method==='GET')return json({configured:Boolean(env.OPENAI_API_KEY),mode:'realtime',realtimeModel:env.OPENAI_REALTIME_MODEL||'gpt-realtime-2.1'});
  if(!['/api/session','/api/review'].includes(path))return json({error:'Not found.'},404);

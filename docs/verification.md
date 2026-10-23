@@ -1,24 +1,25 @@
-# Verification — 23 October 2026
+# Free local version verification — 23 October 2026
 
 ## Passed
 
-- Eight automated tests: API key redaction and missing configuration; same-origin enforcement; SDP request shaping and context; redacted upstream errors; actual-candidate evidence required for review; input bounds; completed transcript deduplication; paused/expired timer semantics.
-- JavaScript syntax checks.
-- Local server and browser UI load; API configuration recognized without exposing the key.
-- Provider model-access checks returned HTTP 200 for configured Realtime and review models.
+- Eleven automated tests covering provider isolation, no paid calls in default free mode, same-origin validation, input bounds, transcript semantics and timer behavior.
+- Syntax checks for the browser and backend.
+- Official Ollama v0.40.9 portable runtime downloaded; qwen3:1.7b model downloaded and verified by Ollama.
+- Real CPU inference succeeded after disabling GPU device and KV cache offload with the supplied launcher settings.
+- A real local two-turn test returned a follow-up specifically about the sample candidate's exponential-backoff delay strategy. Follow-up latency was approximately 1.7 seconds in that run; first model response included load time and took approximately 7.2 seconds.
+- Real local review returned nonempty personalized text (approximately 3,054 characters) in about 24.7 seconds. These are observations, not guaranteed response times or a comprehensive correctness assessment.
+- Initial model-generated openings sometimes invented ownership. The opening is now a bounded curated greeting; subsequent turns and reviews are actual local model generation.
 
-## Blocked live checks
+## Device checks
 
-- Browser microphone request proceeded into session negotiation, but the provider returned HTTP 429.
-- A separate minimal review request also returned HTTP 429.
-- Therefore a successful voice conversation, audible quality, natural follow-ups, interruption handling against the live service and successful personalized review have not been verified with this API project.
-- Resolve the API project's billing/quota/rate limit, then repeat the live checks. Do not mark the system ready for a real interview before a successful two-turn smoke test.
+Browser speech synthesis and microphone recognition depend on browser support and permission. The application can be exercised with typed answers without faking a voice transcript. The full microphone recognition of the candidate's actual speech and subjective voice quality still need candidate verification. Device speech animation is approximate, not phoneme-level lip sync.
 
-## Remaining checks after quota is resolved
+## Constraints
 
-1. Connect, hear the greeting, answer once and confirm an answer-specific follow-up.
-2. Interrupt the voice and ensure old audio stops.
-3. Pause and verify no microphone transmission and stable timer; resume.
-4. Share a small Swift example and discuss it.
-5. Finish, verify microphone stops, and inspect a review based only on actual candidate answers.
-6. Export/reload/reconnect; verify saved transcript and time.
+The tested Mac reports 8 GB memory. The small local model may make technical mistakes. Text context is bounded by a 4,096-token local inference window; lengthy sessions can lose earlier details despite the full transcript remaining saved in the app. Export long sessions and review them in smaller sections if needed.
+
+The free runtime does not use the configured paid API key. Earlier paid-version HTTP 429 failures do not block local inference.
+
+## Browser check
+
+The browser started a free session, displayed a real generated follow-up for a typed synthetic playback-recovery answer, and fired device-speech output. The test session was cleared before handoff. Actual candidate microphone transcription remains to be checked during the first real session.

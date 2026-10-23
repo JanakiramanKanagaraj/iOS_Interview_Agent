@@ -1,51 +1,58 @@
-# Samantha — Conversational iOS Interviewer
+# Samantha — Free Local iOS Interview Agent
 
-A live voice interview system with an animated interviewer, adaptive follow-ups, JD context, coding discussion, and personalized review. It uses OpenAI Realtime over WebRTC, not a scripted question queue or browser text-to-speech.
+An animated interviewer and supportive mentor powered by a local language model. Samantha opens with a brief curated greeting, then generates follow-ups from your actual answer, uses profile/JD context, discusses Swift code, and produces personalized review. Default free mode never calls a paid AI API.
 
-## Start locally
+## Requirements
 
-Requires Node.js 22 or newer. No dependency installation is needed.
+- Node.js 22 or newer.
+- Ollama from https://ollama.com/download.
+- A local model: `ollama pull qwen3:1.7b` (approximately 1.4 GB).
+- Browser microphone permission and speech-recognition support for voice input. Typing remains available.
 
-1. Copy `.env.example` to `.env` in this repository.
-2. Put an API key in `OPENAI_API_KEY`. Never commit the real `.env` file or paste a key into the browser/chat. API billing and model access must be available.
-3. Run `npm start` (or `node server.mjs`).
-4. Open http://127.0.0.1:8766.
-5. Choose duration, voice, interview/coaching mode; optionally edit your profile and paste a JD.
-6. Click **Connect & start interview** and allow the microphone.
+## Run
 
-For a private configuration outside the repository, use `node server.mjs --config=/absolute/path/to/private.env`. The server reloads configuration values for each API request. The default `.env` path is the repository root. A locally installed bundled Node executable can replace `node` where Node is not on PATH.
+```sh
+./scripts/serve-local-model.sh
+# In another terminal:
+ollama pull qwen3:1.7b
+node server.mjs
+```
 
-## Conversation
+Open http://127.0.0.1:8766. If another local server is using that port, run `PORT=8767 node server.mjs` and use the printed URL. No Node dependencies or API key are needed.
 
-Speak naturally; no answer-submission clicks are needed. Samantha hears audio through the Realtime session, responds to the answer, and asks one follow-up at a time. Low-eagerness semantic voice activity detection allows thinking pauses. Interrupt by speaking or pressing **Stop speaking**. Say “hint” or “teach,” or use the matching controls. Use **Pause** to stop microphone transmission, assistant output and the timer; **Resume** continues. Explicit spoken pause/end commands are also recognized from completed transcripts.
+Optional `.env` configuration:
 
-Use the coding area to share Swift or design notes. Code is discussed by the model and is not executed. A typed clarification can correct a misheard word. Both interview and teaching styles are supported.
+```text
+INTERVIEW_PROVIDER=local
+OLLAMA_MODEL=qwen3:1.7b
+```
 
-**Finish & review** closes the peer connection and microphone, then asks the review model to assess the actual transcript and code. It provides strengths, corrections, examples, a retry question and practice priorities. Reviews can be wrong; question uncertain corrections. No fabricated scores or hiring decisions are produced by application logic.
+Local mode is the default even if OPENAI_API_KEY exists. For a different installed local model, set OLLAMA_MODEL and restart or save the config. Larger models need more memory. The included launcher forces CPU operation and disables GPU KV-cache offload, which was necessary in the tested sandbox. A portable runtime can be supplied with OLLAMA_BIN; custom model storage can be set with OLLAMA_MODELS. The original paid Realtime backend remains in source history and as an explicit opt-in backend; the current browser experience uses `/api/chat` with Ollama.
 
-## Voices
+## Start a practice
 
-Samantha is the persona. Marin is the default natural AI voice; Cedar, Coral, Sage and Shimmer are alternatives. Maple is not offered by this API integration. Voice selection applies before connecting.
+Choose a duration, device voice, and interview or coaching style. Add a profile and optional JD. Click **Start free interview**. Samantha asks an opening question and listens after speaking. A short silence submits a recognized answer to the local AI automatically; **I'm done speaking** can finish a turn earlier. Correct recognition errors by typing a clarification. **Stop speaking / listen** interrupts Samantha and returns the microphone to you. Speech recognition pauses while Samantha speaks, so full-duplex voice interruption is not claimed.
 
-## Session history and longer interviews
+Use “hint” or “teach,” or the matching controls. Pause stops recognition, pending generation, speech and the timer. Finish stops the microphone, then requests an actual transcript-based review. Discuss code through the Swift/design area; code is reasoned about, not executed. The model can make mistakes, especially on advanced iOS topics; ask for reasoning and verify uncertain claims.
 
-Session data and the latest 14 review summaries are saved in this browser's localStorage. Download your transcript/review for a durable record. Clear local data through the app when desired. The API's single Realtime connection lasts at most 60 minutes; the app stops at 55 minutes and offers an explicit reconnect with preserved context/time for longer sessions. Network failures also stop the microphone and preserve the transcript. Reconnect needs an explicit click. The preparation schedule is in [the process document](docs/interview-process.md).
+## Privacy and cost
 
-## Privacy and boundaries
+Model inference and review run on this Mac through Ollama. There are no paid API calls in default mode. Downloads, computing and electricity still use your own resources. The browser's speech-recognition implementation may process audio through its vendor's online service; speech is not guaranteed offline. Installed device voices supply speech output. Maple is not included.
 
-The long-lived API key is used only by the server. Browser negotiation receives SDP, not the key. Microphone capture starts after Connect and stops on failure, Finish, or page departure. Audio streams to OpenAI; text/profile/JD/code are sent for session context and review. No raw audio or transcript database is written by the server. Review requests set `store: false`; this does not replace the provider's API data retention policy. Browser localStorage is readable by anyone with access to the same browser profile.
+Transcripts, code and reviews are stored in this browser's localStorage. Download them when useful or clear them with the app control. The server does not write a transcript database or raw audio. Never put secrets in a JD/profile field. The backend binds to loopback, serves only explicit frontend files, validates same-origin writes, bounds input and rate-limits requests. Do not expose this local application publicly without adding authentication.
 
-The server binds only to 127.0.0.1, validates Host and same-origin writes, caps input, and rate-limits API requests. It serves an explicit allowlist of frontend files; it cannot serve `.env` or source files. It is a private local application, not an authenticated public hosting service. Before any hosted release, add visitor authentication and server-side API configuration. Never deploy the long-lived key in static JavaScript or GitHub Pages.
+## Progress
 
-## Validation
+The suggested session duration follows locally completed reviews: 15, then 30 for sessions 2–4, 45 for 5–7, 60 for 8–10, 75 for 11–12, and 90 for 13–14. You can repeat or change a duration. A missed calendar day does not increase difficulty automatically. The app preserves the current transcript and latest 14 review summaries in this browser.
 
-Run `npm test` and `npm run check`. Integration tests mock the provider to verify request shaping, secrets, errors and transcript semantics; mocked tests do not establish successful live voice behavior. Current live verification and account blockers are recorded in [verification](docs/verification.md).
+## Checks and documentation
 
-## Documentation
+Run `npm test` and `npm run check`. Tests verify no paid-provider routing in free mode, backend validation, transcript semantics, and timer behavior. Mock tests do not establish real model quality or microphone recognition; see [verification](docs/verification.md).
 
-- [Two-week interview process](docs/interview-process.md)
+- [Agreed requirements](docs/requirements.md)
+- [Two-week process](docs/interview-process.md)
 - [Mentor behavior](docs/mentor-prompt.md)
-- [Deployment status](docs/deployment.md)
+- [Deployment](docs/deployment.md)
 - [Roadmap](docs/roadmap.md)
 
-Email/calendar reminders remain separate from this application. No application or recruiter message is sent by it.
+Reminder automations and job applications are separate from this local interview app.

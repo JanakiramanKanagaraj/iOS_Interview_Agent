@@ -1,7 +1,7 @@
-# Deployment status
+# Free version deployment
 
-The current conversational application needs the Node backend (`server.mjs`) as well as the `web/` files. A static-only deployment does not provide the live interview APIs. The local application binds to 127.0.0.1 and keeps its key in private configuration.
+The current free version is a local application. Run Ollama and `node server.mjs` on the candidate's computer. The language model is accessed only at 127.0.0.1:11434; no provider key is required. The app binds to 127.0.0.1 on the chosen PORT (default 8766).
 
-The original Sites project remains registered but unpublished. Its source-credential stdin operation was rejected by automatic approval review. It has not been retried through a bypass or replaced with another Site. A future Sites deployment must migrate to a supported server runtime, supply credentials as server-side secrets and preserve private access. Do not publish the old scripted static app as if it were this conversational version.
+GitHub stores source and documentation. Do not upload the Ollama runtime, model weights, real .env files, keys or interview transcripts. GitHub Pages can host static files but cannot run the local model or this backend.
 
-GitHub contains the application code and documentation, without private configuration or interview transcripts. GitHub Pages cannot run this Node backend. A hosted release still requires authenticated visitor access, secure server runtime configuration, and deployment verification.
+The original private Sites registration is still unpublished because automatic approval review blocked its publishing-credential stdin step. Do not publish the old static scripted version as this local agent. Cloud hosting of the free model would require separate computing resources and authentication, and is not part of this local setup.
