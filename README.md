@@ -6,7 +6,7 @@ An animated interviewer and supportive mentor powered by a local language model.
 
 - Node.js 22 or newer.
 - Ollama from https://ollama.com/download.
-- A local model: `ollama pull qwen3:1.7b` (approximately 1.4 GB).
+- A local model: `ollama pull qwen3:4b-instruct-2507-q4_K_M` (approximately 2.5 GB).
 - Browser microphone permission and speech-recognition support for voice input. Typing remains available.
 
 ## Run
@@ -14,7 +14,7 @@ An animated interviewer and supportive mentor powered by a local language model.
 ```sh
 ./scripts/serve-local-model.sh
 # In another terminal:
-ollama pull qwen3:1.7b
+ollama pull qwen3:4b-instruct-2507-q4_K_M
 node server.mjs
 ```
 
@@ -24,10 +24,10 @@ Optional `.env` configuration:
 
 ```text
 INTERVIEW_PROVIDER=local
-OLLAMA_MODEL=qwen3:1.7b
+OLLAMA_MODEL=qwen3:4b-instruct-2507-q4_K_M
 ```
 
-Local mode is the default even if OPENAI_API_KEY exists. For a different installed local model, set OLLAMA_MODEL and restart or save the config. Larger models need more memory. The included launcher forces CPU operation and disables GPU KV-cache offload, which was necessary in the tested sandbox. A portable runtime can be supplied with OLLAMA_BIN; custom model storage can be set with OLLAMA_MODELS. The original paid Realtime backend remains in source history and as an explicit opt-in backend; the current browser experience uses `/api/chat` with Ollama.
+Local mode is the default even if OPENAI_API_KEY exists. The selected default is Qwen3 4B Instruct (2507). The smaller `qwen3:1.7b` remains a faster fallback: pull it and set `OLLAMA_MODEL=qwen3:1.7b` if your machine struggles. For a different installed local model, set OLLAMA_MODEL and restart or save the config. Larger models need more memory. The included launcher forces CPU operation and disables GPU KV-cache offload, which was necessary in the tested sandbox. A portable runtime can be supplied with OLLAMA_BIN; custom model storage can be set with OLLAMA_MODELS. The original paid Realtime backend remains in source history and as an explicit opt-in backend; the current browser experience uses `/api/chat` with Ollama.
 
 ## Start a practice
 
@@ -68,3 +68,5 @@ Runtime logs record topic, phase, counts, generation/rejection status and prompt
 ## Free model licences
 
 Ollama is MIT-licensed software for running models; model licences are separate. Qwen3 is available under Apache 2.0. Local inference has no per-request API charge. Qwen3 4B Instruct (2507, Q4_K_M, about 2.5 GB) is an alternative to the smaller 1.7B model for stronger instruction following; compare latency and quality on your own hardware before switching. Model weights are downloaded separately and never committed. See [Ollama licence](https://github.com/ollama/ollama/blob/main/LICENSE) and [Qwen model card](https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507).
+
+The tested 8 GB Mac completed a four-turn synthetic conversation with the 4B model. Generated replies took 7.3–12.6 seconds (including one validation retry); this limited check does not establish technical answer accuracy, long-session quality or microphone performance.

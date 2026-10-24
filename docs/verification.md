@@ -41,3 +41,7 @@ The latest automated suite has 33 passing checks. New coverage exercises introdu
 The smaller Qwen3 1.7B model produced relevant but sometimes generic project questions in a four-turn synthetic check. Initial output also included long scenario formatting, praise and a stale-response question after the same mechanism was explained. Additional validation rejects these detected patterns; it cannot guarantee that every semantic repetition or technical error is caught. Generation is retried once before a guided fallback. The local model remains fallible. No weights were trained or fine-tuned.
 
 Run a reproducible short synthetic conversation with `node scripts/evaluate-interview.mjs MODEL_TAG`. The evaluator calls only the local Ollama service. Synthetic answers do not represent a candidate assessment.
+
+## Selected free model
+
+Qwen3 4B Instruct 2507 Q4_K_M downloaded successfully and completed the same four-turn synthetic conversation as the smaller model on the tested 8 GB Mac using CPU inference. Three generated turns took 12.3, 7.3 and 12.6 seconds; the last included one off-topic rejection and retry. Its project follow-up referenced the generation-identifier mechanism in the answer. This is a limited smoke check, not a benchmark or proof of technical correctness. The default and local configuration now select this model. The smaller Qwen3 1.7B remains available for faster responses. Neither model incurs a local per-request API fee; browser speech may still use its vendor’s service.

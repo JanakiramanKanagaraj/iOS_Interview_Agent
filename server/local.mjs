@@ -3,7 +3,7 @@ import {validateContext,reviewInstructions} from './interviewer.mjs';
 const base='http://127.0.0.1:11434';
 const json=(v,status=200)=>new Response(JSON.stringify(v),{status,headers:{'Content-Type':'application/json','Cache-Control':'no-store'}});
 export async function handleLocal(request,env,fetcher=fetch){
- const url=new URL(request.url);const model=env.OLLAMA_MODEL||'qwen3:1.7b';
+ const url=new URL(request.url);const model=env.OLLAMA_MODEL||'qwen3:4b-instruct-2507-q4_K_M';
  if(url.pathname==='/api/health'&&request.method==='GET'){
   try{const r=await fetcher(base+'/api/tags',{signal:AbortSignal.timeout(2500)});if(!r.ok)throw new Error();const d=await r.json();const configured=(d.models||[]).some(m=>m.name===model);return json({provider:'local',configured,model,paidAPI:false,message:configured?'Local AI ready':`Download ${model} in Ollama first.`});}catch{return json({provider:'local',configured:false,model,paidAPI:false,message:'Start Ollama locally to enable the interviewer.'});}
  }
