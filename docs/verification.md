@@ -45,3 +45,13 @@ Run a reproducible short synthetic conversation with `node scripts/evaluate-inte
 ## Selected free model
 
 Qwen3 4B Instruct 2507 Q4_K_M downloaded successfully and completed the same four-turn synthetic conversation as the smaller model on the tested 8 GB Mac using CPU inference. Three generated turns took 12.3, 7.3 and 12.6 seconds; the last included one off-topic rejection and retry. Its project follow-up referenced the generation-identifier mechanism in the answer. This is a limited smoke check, not a benchmark or proof of technical correctness. The default and local configuration now select this model. The smaller Qwen3 1.7B remains available for faster responses. Neither model incurs a local per-request API fee; browser speech may still use its vendor’s service.
+
+## In-chat conversation reference regression
+
+Added controls for spoken feedback requests, persistent rapid-fire mode, role/topic switches and natural uncertainty. Feedback requests and help are excluded from substantive answer evidence. Reviews use bounded question/answer pairs and report how much of a long transcript was included. Previous review notes are practice context, not new answer evidence.
+
+The real 4B model produced a short SwiftUI rapid-fire question in 8.3 seconds. A teaching response explained ownership but initially chose a harder view-identity follow-up; a simpler-retry constraint was then added. The initial real review took 80.7 seconds and caught the ownership misconception but also generated an invalid `@ObservableObject` wrapper and imprecise view-instance wording. A quality gate now catches those known patterns and returns a limited reference-based review. This gate is not a general technical fact checker. Long reviews may take substantially longer than individual questions on the CPU-only runtime.
+
+The duration outline, configurable target role, bounded previous feedback, mid-session feedback handling and known-invalid-review fallback have automated regression coverage. Actual voice recognition and subjective realism still need candidate testing. No raw candidate transcript or résumé was added to this repository.
+
+The final teaching retest explained StateObject/ObservedObject and ended with the simpler child-ownership retry (12.5 seconds). Rapid-fire returned one concise State-versus-Binding question (7.2 seconds). The final automated suite has 44 passing tests. These results establish the tested controls and examples, not human-equivalent conversation or comprehensive technical accuracy.

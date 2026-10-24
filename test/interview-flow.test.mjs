@@ -5,7 +5,7 @@ import {nextStep,openingQuestion,fallbackQuestion,turnMessages,repeatedQuestion,
 import {handleLocal} from '../server/local.mjs';
 import {updateSpeechSegments} from '../web/speech-turn.mjs';
 const base={resume:'Built OTT playback with AVPlayer. Used Swift actors and async cancellation in a search feature.',jd:'Senior iOS: Swift concurrency, actors, async await, SwiftUI, unit testing.'};
-const c=h=>validateContext({...base,history:h});
+const c=h=>validateContext({...base,minutes:30,history:h});
 const post=body=>new Request('http://127.0.0.1:8769/api/chat',{method:'POST',headers:{Origin:'http://127.0.0.1:8769'},body:JSON.stringify(body)});
 test('JD requirements outrank an unrelated dominant resume domain',()=>{const step=nextStep(c([]));assert.equal(step.topic.id,'concurrency');assert.match(openingQuestion(c([]),step),/tell me about yourself/i);assert.match(step.resumeEvidence,/actors/);});
 test('introduction and project discussion precede JD technical rounds',()=>{
@@ -22,8 +22,8 @@ test('brief answers get room to explain, substantive reasoning can advance after
 });
 test('a complete mock reaches coding and design without recycling topics',()=>{
  const h=[];const seen=[];
- for(let i=0;i<22;i++){const ctx=c(h),step=nextStep(ctx);seen.push(step.topic.id);const text=h.length?plannedQuestion(ctx,step):openingQuestion(ctx,step);h.push({role:'assistant',text,topic:step.topic.id,phase:step.phase},{role:'user',text:i<3?'I owned a feed feature.':'Please move on to the next question.'});if(step.phase==='closing')break;}
- assert.ok(seen.includes('dsa'));assert.ok(seen.includes('design'));assert.equal(nextStep(c(h)).phase,'closing');
+ for(let i=0;i<22;i++){const ctx={...c(h),minutes:90},step=nextStep(ctx);seen.push(step.topic.id);const text=h.length?plannedQuestion(ctx,step):openingQuestion(ctx,step);h.push({role:'assistant',text,topic:step.topic.id,phase:step.phase},{role:'user',text:i<3?'I owned a feed feature.':'Please move on to the next question.'});if(step.phase==='closing')break;}
+ assert.ok(seen.includes('dsa'));assert.ok(seen.includes('design'));assert.equal(nextStep({...c(h),minutes:90}).phase,'closing');
 });
 test('a help request stays on the current competency and teaches',()=>{const history=[{role:'assistant',text:'How would you handle cancellation?'},{role:'user',text:'Please explain this concept simply with a Swift example.'}];const step=nextStep(c(history));assert.equal(step.phase,'teach');assert.equal(step.answerCount,0);assert.match(turnMessages(c(history),step)[0].content,/Explain the last concept simply/);});
 test('already-answered requests advance rather than repeat',()=>{const h=[{role:'assistant',text:'How do you handle cancellation?'},{role:'user',text:'I cancel the previous task.'},{role:'assistant',text:'How would you handle cancellation?'},{role:'user',text:'I already answered this. Next question please.'}];assert.equal(nextStep(c(h)).phase,'new-topic');assert.notEqual(nextStep(c(h)).topic.id,'concurrency');});

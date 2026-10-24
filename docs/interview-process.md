@@ -16,11 +16,11 @@ Improve interview confidence and build a focused job pipeline. An offer within t
 
 | Completed session | Interview minutes | Focus |
 | --- | ---: | --- |
-| 1 | 15 | Introduction, project ownership, Swift baseline |
-| 2–4 | 30 | Swift, ARC, UIKit/SwiftUI, state, concurrency |
-| 5–7 | 45 | DSA in Swift, architecture, testing, mixed mock |
-| 8–10 | 60 | Mobile system design, DSA, production debugging |
-| 11–12 | 75 | JD-specific technical, coding, leadership mocks |
+| 1 | 15 | Introduction, project ownership, general fundamentals |
+| 2–4 | 30 | Role-specific technical discussion and one coding exercise |
+| 5–7 | 45 | Technical discussion and two coding exercises |
+| 8–10 | 60 | Rapid-fire, DSA and a small system-design discussion |
+| 11–12 | 75 | Broader JD-specific technical, coding, DSA and design mocks |
 | 13–14 | 90 | Full interview simulations and reassessment |
 
 Advance by completed sessions rather than elapsed dates. Repeat a duration when helpful. Pause on request. A missed day does not automatically raise difficulty.

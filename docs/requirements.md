@@ -39,3 +39,11 @@ Before restarting interview practice, verify a real local model reply, an answer
 ## Reset behavior update
 
 Reset clears background, résumé upload and extracted text, JD, code, current answers and the timer, then returns to setup. Voice, selected duration, style and past reviews remain available. The mentor uses the temporary name Interview Mentor until the user chooses the application name.
+
+## Conversation reference and updated progression (24 October)
+
+The in-chat mock is the behavioral reference: respond to the actual answer, probe a missing detail, acknowledge uncertainty without judgment, teach briefly and ask a simpler retry. Do not end practice merely because a candidate is unsure. Feedback must separate observed strengths, actual corrections and unassessed areas, and give at most three practice priorities. Speech-transcription uncertainty is not itself a candidate error.
+
+Session coverage now follows the latest requested progression: 15 minutes general introduction/project/fundamentals; 30 adds role-specific technical questions and one coding exercise; 45 adds a second coding exercise; 60 adds rapid-fire, DSA and a small design discussion; 75–90 broaden the mixed simulation with coding, DSA and system design. These are coverage plans, not a promise that every round finishes before the timer. The personal job-search sprint is now one week; an offer is not guaranteed.
+
+Target role/technology is configurable. The iOS path has the most validation. Other software roles use the same conversation engine, supplied role/JD and neutral fallback questions; their domain accuracy still needs separate evaluation. Cross-session feedback is kept locally for revisiting practice priorities. Earlier generated feedback is not proof of current ability or measured improvement.

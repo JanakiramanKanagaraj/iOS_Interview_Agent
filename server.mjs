@@ -24,7 +24,7 @@ const server=http.createServer(async(req,res)=>{
    const config=await env();const result=url.pathname==='/api/resume'?await handleResume(request,config):await handleAPI(request,config);res.writeHead(result.status,Object.fromEntries(result.headers));res.end(Buffer.from(await result.arrayBuffer()));return;
   }
   if(req.method!=='GET'){res.writeHead(405);res.end();return;}
-  const names={'/':'index.html','/index.html':'index.html','/style.css':'style.css','/app.js':'app.js','/session-state.mjs':'session-state.mjs','/speech-turn.mjs':'speech-turn.mjs'};const name=names[url.pathname];if(!name){res.writeHead(404);res.end('Not found');return;}
+  const names={'/':'index.html','/index.html':'index.html','/style.css':'style.css','/app.js':'app.js','/session-state.mjs':'session-state.mjs','/speech-turn.mjs':'speech-turn.mjs','/session-plan.mjs':'session-plan.mjs'};const name=names[url.pathname];if(!name){res.writeHead(404);res.end('Not found');return;}
   const data=await readFile(path.join(root,'web',name));res.writeHead(200,{'Content-Type':name.endsWith('.html')?'text/html':name.endsWith('.css')?'text/css':'text/javascript','Cache-Control':'no-store'});res.end(data);
  }catch{if(!res.headersSent)res.writeHead(500);res.end('Local server error.');}
 });
