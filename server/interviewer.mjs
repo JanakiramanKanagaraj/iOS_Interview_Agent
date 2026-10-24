@@ -12,7 +12,7 @@ export function validateContext(body) {
   if(body.previousReview!==undefined&&(typeof body.previousReview!=='string'||body.previousReview.length>4000))throw new Error('Previous review must be text of at most 4,000 characters.');
   if(body.technology!==undefined&&(typeof body.technology!=='string'||body.technology.length>80))throw new Error('Technology must be text of at most 80 characters.');
   for(const t of history)for(const key of ['topic','phase'])if(t[key]!==undefined&&(typeof t[key]!=='string'||t[key].length>40))throw new Error('Invalid transcript metadata.');
-  return {minutes,voice,technology:body.technology||'',previousReview:body.previousReview||'',profile:body.profile||'',resume:body.resume||'',jd:body.jd||'',history,mode:body.mode==='coach'?'coach':'interview'};
+  return {minutes,voice,technology:body.technology||'',previousReview:body.previousReview||'',learningMemory:body.learningMemory||null,profile:body.profile||'',resume:body.resume||'',jd:body.jd||'',history,mode:body.mode==='coach'?'coach':'interview'};
 }
 export function interviewInstructions(c) {
  return `You are Interview Mentor, a thoughtful senior iOS interviewer and patient mentor speaking directly to the candidate. You are an AI interviewer, not a human. Speak natural conversational English in a warm, clear voice with a relaxed pace. Keep most turns to 1–3 sentences and ask only ONE question at a time. Wait for the complete answer; allow thinking pauses. React to what the candidate actually said and ask specific follow-ups about their reasoning, technical decisions, tradeoffs, ownership, and evidence. Do not march through a predetermined list or repeat the introduction on reconnection.

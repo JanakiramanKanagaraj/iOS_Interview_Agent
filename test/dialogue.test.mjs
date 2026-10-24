@@ -63,3 +63,7 @@ test('the chat review endpoint exposes a checked fallback when the model invents
  const req=new Request('http://127.0.0.1:8769/api/chat',{method:'POST',headers:{Origin:'http://127.0.0.1:8769'},body:JSON.stringify({history:[{role:'assistant',text:'Which wrapper owns this ObservableObject?'},{role:'user',text:'ObservedObject because it is faster.'},{role:'user',text:'Please give feedback.'}]})});
  const res=await handleLocal(req,{},async()=>new Response(JSON.stringify({message:{content:'Use @ObservableObject to own the model.'}})));const d=await res.json();assert.equal(d.reviewSource,'reference-fallback');assert.match(d.review,/@StateObject/);assert.doesNotMatch(d.review,/@ObservableObject/);assert.equal(d.reviewScope.totalAnswers,1);
 });
+
+test('reviews cannot turn observation wrappers into superclasses',async()=>{
+ const {reviewIssue}=await import('../server/dialogue.mjs');assert.match(reviewIssue('Use ObservedObject as its superclass.'),/inheritance/);
+});

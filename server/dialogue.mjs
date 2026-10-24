@@ -49,6 +49,7 @@ export function teachingRetry(question){
 }
 
 export function reviewIssue(text){
+ if(/ObservedObject.{0,80}(?:superclass|inheritance)|(?:superclass|inherit).{0,80}ObservedObject/i.test(text))return 'confuses observation wrappers with class inheritance';
  if(/@ObservableObject\b/.test(text))return 'invalid ObservableObject property-wrapper name';
  if(/once per view instance/i.test(text))return 'confuses view values with view identity';
  if(/(?:score|rating)\s*[:=]?\s*\d+\s*(?:\/\s*10|%)/i.test(text))return 'unsupported numerical assessment';
@@ -58,6 +59,7 @@ export function referenceReview(evidence){
  const strengths=[],corrections=[],tasks=[];
  for(const {question,answer} of evidence.answers){
   const q=question.toLowerCase(),a=answer.toLowerCase();
+  if(/parent|child|receiv|pass/.test(q)&&/observableobject|observedobject/.test(q)&&/^\s*@?observed\s*object[.!\s]*$/i.test(answer))strengths.push('You correctly chose ObservedObject for a child observing an existing parent-owned ObservableObject.');
   if(/struct/.test(a)&&/value/.test(a)&&/class/.test(a)&&/reference/.test(a)&&! /\bnot\b|isn.t/.test(a))strengths.push('You correctly distinguished structs as value types and classes as reference types.');
   if(/state\s*object|observed\s*object|observableobject/i.test(q)&&(/observed\s*object/i.test(a)&&/creat|own/i.test(q)&&!/child|receiv|passed/i.test(q)||/fast|instant|quick/i.test(a))){
    corrections.push('Model ownership: update speed does not determine which wrapper to choose. For an ObservableObject, a view that creates and owns it uses @StateObject; a child receiving that existing instance uses @ObservedObject. StateObject preserves the instance for the same view identity. Neither wrapper makes updates faster.');tasks.push('Explain a parent-owned ObservableObject and the wrapper used by its child view.');

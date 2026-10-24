@@ -1,0 +1,10 @@
+import {handleLocal} from '../server/local.mjs';
+const model=process.argv[2]||'qwen3:4b-instruct-2507-q4_K_M';
+const cases=[
+ {name:'brief-correct',topic:'swiftui',question:'A parent owns an ObservableObject and passes it to a child. Which wrapper does the child use?',answer:'ObservedObject.',actions:['advance','probe']},
+ {name:'wrong-reason',topic:'swiftui',question:'A screen creates its own ObservableObject. Would it use StateObject or ObservedObject, and why?',answer:'ObservedObject because it updates the view faster.',actions:['probe','clarify','teach']},
+ {name:'uncertain',topic:'swiftui',question:'Would this model use StateObject or ObservedObject?',answer:'I am not sure. Please teach me.',actions:['teach','retry']},
+ {name:'possible-misheard-number',topic:'rapid',question:'Which HTTP status means success with no response body?',answer:'203.',actions:['clarify','probe']},
+ {name:'long-vague-answer',topic:'swiftui',question:'Who owns the model and how do you preserve its lifetime?',answer:'I have worked with many screens and many applications. We use the framework and architecture and follow best practices. The team reviews the code and we make changes when bugs are found. I have done this for a long time in many different projects.',actions:['probe','clarify']}
+];
+for(const item of cases){const start=Date.now();const req=new Request('http://127.0.0.1:8769/api/chat',{method:'POST',headers:{Origin:'http://127.0.0.1:8769'},body:JSON.stringify({minutes:60,technology:'iOS / Swift',jd:'SwiftUI state ownership, REST APIs, testing, DSA and system design',history:[{role:'assistant',text:item.question,topic:item.topic},{role:'user',text:item.answer}]})});const response=await handleLocal(req,{OLLAMA_MODEL:model});const d=await response.json();console.log(JSON.stringify({case:item.name,model,seconds:Math.round((Date.now()-start)/100)/10,status:response.status,action:d.interview?.action,source:d.interview?.source,passed:response.ok&&['generated','reference-teaching'].includes(d.interview?.source)&&item.actions.includes(d.interview?.action),reply:d.reply,error:d.error,notes:d.learningMemory?.entries.length||0}));if(!response.ok)break;}

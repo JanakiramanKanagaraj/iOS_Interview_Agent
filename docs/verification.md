@@ -55,3 +55,9 @@ The real 4B model produced a short SwiftUI rapid-fire question in 8.3 seconds. A
 The duration outline, configurable target role, bounded previous feedback, mid-session feedback handling and known-invalid-review fallback have automated regression coverage. Actual voice recognition and subjective realism still need candidate testing. No raw candidate transcript or résumé was added to this repository.
 
 The final teaching retest explained StateObject/ObservedObject and ended with the simpler child-ownership retry (12.5 seconds). Rapid-fire returned one concise State-versus-Binding question (7.2 seconds). The final automated suite has 44 passing tests. These results establish the tested controls and examples, not human-equivalent conversation or comprehensive technical accuracy.
+
+## Structured understanding release
+
+61 automated tests pass. New coverage includes explicit semantic topic transitions, short correct answers, fabricated evidence rejection, transcript-backed memory, assisted retries, bounded context, schema-constrained evidence choices, reference teaching/probing, safe fallback behavior, role confusion, and cancellation of an in-flight local request.
+
+Live model investigation retained Qwen3 4B Instruct as default after the newer Qwen3.5 CPU model produced a wrong ownership explanation and confused wrappers with inheritance in synthetic HTTP tests. Known checks were extended accordingly. This remains a limited guard set, not a comprehensive factual verifier. See answer-understanding.md for reproducible scenarios and the distinction between generated and reference responses.

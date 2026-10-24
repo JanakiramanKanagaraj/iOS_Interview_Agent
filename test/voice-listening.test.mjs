@@ -1,3 +1,4 @@
+import {activeLearningNotes} from '../web/learning-state.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
@@ -10,7 +11,7 @@ function room(){
  const element=()=>({value:'',textContent:'',classList:{add(){},remove(){}},style:{setProperty(){}},replaceChildren(){},append(){},scrollIntoView(){},files:[]});
  const get=id=>{if(!nodes.has(id))nodes.set(id,element());return nodes.get(id);};get('minutes').value='15';get('turnMode').value='manual';
  class Recognition{start(){}abort(){}}
- const ctx=vm.createContext({document:{getElementById:get,createElement:element,querySelector:element},window:{SpeechRecognition:Recognition,addEventListener(){}},localStorage:{getItem(){return null;},setItem(){}},setTimeout(fn,delay){timers.set(++id,{fn,delay});return id;},clearTimeout(id){timers.delete(id);},setInterval(){return ++id;},clearInterval(){},Date,JSON,Number,String,Array,Boolean,updateSpeechSegments,normalizeAnswer,remainingSeconds,sessionOutline,fetch:async()=>({json:async()=>({provider:'local',configured:true,model:'test'})})});
+ const ctx=vm.createContext({document:{getElementById:get,createElement:element,querySelector:element},window:{SpeechRecognition:Recognition,addEventListener(){}},localStorage:{getItem(){return null;},setItem(){}},setTimeout(fn,delay){timers.set(++id,{fn,delay});return id;},clearTimeout(id){timers.delete(id);},setInterval(){return ++id;},clearInterval(){},Date,JSON,Number,String,Array,Boolean,updateSpeechSegments,normalizeAnswer,remainingSeconds,sessionOutline,activeLearningNotes,fetch:async()=>({json:async()=>({provider:'local',configured:true,model:'test'})})});
  const source=readFileSync(new URL('../web/app.js',import.meta.url),'utf8').replace(/^import .*;\n/gm,'');vm.runInContext(source,ctx);
  vm.runInContext("state='live';busy=false;muted=false;let submitted=[];submit=text=>submitted.push(text);listen();",ctx);
  const result=text=>Object.assign([{transcript:text}],{isFinal:true});

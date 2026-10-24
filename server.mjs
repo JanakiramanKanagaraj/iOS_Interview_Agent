@@ -20,11 +20,12 @@ const server=http.createServer(async(req,res)=>{
     const now=Date.now();const recent=(hits.get(url.pathname)||[]).filter(t=>now-t<60000);if(recent.length>=12){res.writeHead(429,{'Content-Type':'application/json'});res.end(JSON.stringify({error:'Please wait a minute before retrying.'}));return;}recent.push(now);hits.set(url.pathname,recent);
    }
    let size=0;const chunks=[];for await(const part of req){size+=part.length;if(size>(url.pathname==='/api/resume'?6*1024*1024:400000)){res.writeHead(413);res.end();return;}chunks.push(part);}
-   const request=new Request(url,{method:req.method,headers:req.headers,body:req.method==='GET'?undefined:Buffer.concat(chunks)});
-   const config=await env();const result=url.pathname==='/api/resume'?await handleResume(request,config):await handleAPI(request,config);res.writeHead(result.status,Object.fromEntries(result.headers));res.end(Buffer.from(await result.arrayBuffer()));return;
+   const cancellation=new AbortController();res.once('close',()=>{if(!res.writableEnded)cancellation.abort();});
+   const request=new Request(url,{signal:cancellation.signal,method:req.method,headers:req.headers,body:req.method==='GET'?undefined:Buffer.concat(chunks)});
+   const config=await env();const result=url.pathname==='/api/resume'?await handleResume(request,config):await handleAPI(request,config);if(cancellation.signal.aborted)return;res.writeHead(result.status,Object.fromEntries(result.headers));res.end(Buffer.from(await result.arrayBuffer()));return;
   }
   if(req.method!=='GET'){res.writeHead(405);res.end();return;}
-  const names={'/':'index.html','/index.html':'index.html','/style.css':'style.css','/app.js':'app.js','/session-state.mjs':'session-state.mjs','/speech-turn.mjs':'speech-turn.mjs','/session-plan.mjs':'session-plan.mjs'};const name=names[url.pathname];if(!name){res.writeHead(404);res.end('Not found');return;}
+  const names={'/':'index.html','/index.html':'index.html','/style.css':'style.css','/app.js':'app.js','/session-state.mjs':'session-state.mjs','/speech-turn.mjs':'speech-turn.mjs','/session-plan.mjs':'session-plan.mjs','/learning-state.mjs':'learning-state.mjs'};const name=names[url.pathname];if(!name){res.writeHead(404);res.end('Not found');return;}
   const data=await readFile(path.join(root,'web',name));res.writeHead(200,{'Content-Type':name.endsWith('.html')?'text/html':name.endsWith('.css')?'text/css':'text/javascript','Cache-Control':'no-store'});res.end(data);
  }catch{if(!res.headersSent)res.writeHead(500);res.end('Local server error.');}
 });
