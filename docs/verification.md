@@ -33,3 +33,11 @@ PDF, DOCX and TXT extraction passed with synthetic documents. Browser file uploa
 Added tests for JD priority over resume keyword volume, bounded follow-ups and topic advancement, help and skip requests, exact/paraphrased duplicate rejection, persistent provider repeats, explicit repeats, bounded prompts with long documents/history, and Safari cumulative final-result deduplication. A real local seven-turn smoke test is run separately from browser sessions using synthetic candidate context. Model output is not assumed correct merely because a response succeeds.
 
 Final regression result: 27 automated tests pass. The final real local test produced seven distinct questions across concurrency, UI state, architecture and testing, with topic advancement after at most one follow-up. Accepted generated follow-ups took approximately 1.6–3.2 seconds in that run; a guarded fallback took approximately 3.4 seconds. These are synthetic test observations, not a guarantee of correctness or an evaluation of the candidate. Third-person model commentary is removed from spoken interview turns.
+
+## Conversational rebuild (24 October 2026)
+
+The latest automated suite has 33 passing checks. New coverage exercises introduction → project ownership → technical rounds → coding/design, longer exploration of brief answers, same-topic teaching, concise output checks, and preservation of speech across recognition restarts. A VM-based browser harness verifies manual submission and the optional eight-second silence deadline; this is not a real microphone test.
+
+The smaller Qwen3 1.7B model produced relevant but sometimes generic project questions in a four-turn synthetic check. Initial output also included long scenario formatting, praise and a stale-response question after the same mechanism was explained. Additional validation rejects these detected patterns; it cannot guarantee that every semantic repetition or technical error is caught. Generation is retried once before a guided fallback. The local model remains fallible. No weights were trained or fine-tuned.
+
+Run a reproducible short synthetic conversation with `node scripts/evaluate-interview.mjs MODEL_TAG`. The evaluator calls only the local Ollama service. Synthetic answers do not represent a candidate assessment.

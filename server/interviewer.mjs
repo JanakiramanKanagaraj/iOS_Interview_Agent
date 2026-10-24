@@ -9,6 +9,7 @@ export function validateContext(body) {
   const history=body.history??[];
   if(!Array.isArray(history)||history.length>240)throw new Error('Session history is too large.');
   if(history.some(t=>!t||!['user','assistant'].includes(t.role)||typeof t.text!=='string'||t.text.length>12000))throw new Error('Invalid transcript entry.');
+  for(const t of history)for(const key of ['topic','phase'])if(t[key]!==undefined&&(typeof t[key]!=='string'||t[key].length>40))throw new Error('Invalid transcript metadata.');
   return {minutes,voice,profile:body.profile||'',resume:body.resume||'',jd:body.jd||'',history,mode:body.mode==='coach'?'coach':'interview'};
 }
 export function interviewInstructions(c) {

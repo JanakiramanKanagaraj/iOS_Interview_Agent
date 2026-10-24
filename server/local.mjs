@@ -20,7 +20,7 @@ export async function handleLocal(request,env,fetcher=fetch){
    const done=(reply,extra={})=>{const diagnostics={...meta,...extra};console.info(JSON.stringify({event:'interview_turn',...diagnostics}));return json({reply,provider:'local',interview:diagnostics});};
    if(!c.history.length)return done(openingQuestion(c,step),{source:'opening'});
    if(repeatRequest(c.history.at(-1)?.text||'')&&step.lastQuestion)return done(step.lastQuestion,{source:'requested-repeat'});
-   if(step.phase==='new-topic')return done(plannedQuestion(c,step),{source:'planned-topic'});
+
    let rejected='';
    for(let attempt=0;attempt<2;attempt++){
     const messages=turnMessages(c,step,rejected);
@@ -32,7 +32,7 @@ export async function handleLocal(request,env,fetcher=fetch){
     if(!rejected)return done(text,{source:'generated',attempts:attempt+1,promptCharacters:JSON.stringify(messages).length});
     console.info(JSON.stringify({event:'question_rejected',...meta,reason:rejected,attempt:attempt+1}));
    }
-   return done(plannedQuestion(c,step),{source:'repeat-guard',reason:rejected});
+   return done(plannedQuestion(c,step),{source:'guided-fallback',reason:rejected});
   }
   const r=await fetcher(base+'/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model,messages:[{role:'system',content:reviewInstructions+' /no_think'},{role:'user',content:JSON.stringify({...c,code:body.code||''})}],stream:false,think:false,keep_alive:'15m',options:{temperature:.35,num_predict:1800,num_ctx:4096,num_gpu:0}}),signal:AbortSignal.timeout(240000)});
   if(!r.ok)return json({error:'The local model could not complete the review. Your transcript is kept.'},502);

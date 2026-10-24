@@ -25,9 +25,9 @@ Improve interview confidence and build a focused job pipeline. An offer within t
 
 Advance by completed sessions rather than elapsed dates. Repeat a duration when helpful. Pause on request. A missed day does not automatically raise difficulty.
 
-## JD-based preparation (mentor workflow; not automated in app)
+## JD-based preparation
 
-Map the JD's requirements to evidence from the candidate's experience. Separate demonstrated strengths from unknowns. Select relevant technical, coding, design, and behavioral questions. Never invent experience or achievements. Revisit earlier misconceptions across sessions.
+The app ranks JD competencies and extracts relevant résumé evidence. This keyword-based mapping is a starting point, not a full assessment of fit. Map the JD's requirements to evidence from the candidate's experience. Separate demonstrated strengths from unknowns. Select relevant technical, coding, design, and behavioral questions. Never invent experience or achievements. Revisit earlier misconceptions across sessions.
 
 ## Feedback record
 
